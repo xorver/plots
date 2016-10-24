@@ -9,14 +9,14 @@ DataNoSync = read.csv(args[2], header = TRUE, sep = ",")
 SyncBS = aggregate(DataSync$ThroughputMBs ~ DataSync$BlockSizeMB, FUN=sd)$'DataSync$BlockSizeMB' / (1024*1024)
 SyncSD = aggregate(DataSync$ThroughputMBs ~ DataSync$BlockSizeMB, FUN=sd)$'DataSync$ThroughputMBs'
 SyncTH = aggregate(DataSync$ThroughputMBs ~ DataSync$BlockSizeMB, FUN=mean)$'DataSync$ThroughputMBs'
-SyncCPU = aggregate(DataSync$CPU ~ DataSync$BlockSizeMB, FUN=mean)$'DataSync$CPU'
-SyncCPUSD = aggregate(DataSync$CPU ~ DataSync$BlockSizeMB, FUN=sd)$'DataSync$CPU'
+SyncCPU = aggregate(DataSync$CPU0 ~ DataSync$BlockSizeMB, FUN=mean)$'DataSync$CPU0'
+SyncCPUSD = aggregate(DataSync$CPU0 ~ DataSync$BlockSizeMB, FUN=sd)$'DataSync$CPU0'
 
 NoSyncBS = aggregate(DataNoSync$ThroughputMBs ~ DataNoSync$BlockSizeMB, FUN=sd)$'DataNoSync$BlockSizeMB' / (1024*1024)
 NoSyncSD = aggregate(DataNoSync$ThroughputMBs ~ DataNoSync$BlockSizeMB, FUN=sd)$'DataNoSync$ThroughputMBs'
 NoSyncTH = aggregate(DataNoSync$ThroughputMBs ~ DataNoSync$BlockSizeMB, FUN=mean)$'DataNoSync$ThroughputMBs'
-NoSyncCPU = aggregate(DataNoSync$CPU ~ DataNoSync$BlockSizeMB, FUN=mean)$'DataNoSync$CPU'
-NoSyncCPUSD = aggregate(DataNoSync$CPU ~ DataNoSync$BlockSizeMB, FUN=sd)$'DataNoSync$CPU'
+NoSyncCPU = aggregate(DataNoSync$CPU0 ~ DataNoSync$BlockSizeMB, FUN=mean)$'DataNoSync$CPU0'
+NoSyncCPUSD = aggregate(DataNoSync$CPU0 ~ DataNoSync$BlockSizeMB, FUN=sd)$'DataNoSync$CPU0'
 
 pdf(args[3], width=7, height=12)
 

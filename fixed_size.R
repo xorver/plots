@@ -24,7 +24,7 @@ pdf(args[2])
 TH = Throughput[1:ChunkNum]
 SD = ThroughputSD[1:ChunkNum]
 plot(UniqueChunk, TH, ylim=c(200, 400), xlab="Chunk Size [MB]", col='green', xaxt='n', log="x", ylab="Throughput [MB / s]")
-axis(1, at=UniqueChunk, lab=c(UniqueChunk[1:(ChunkNum-1)], "fixed"))
+axis(1, at=UniqueChunk, lab=c(UniqueChunk[1:(ChunkNum-1)], "variable"))
 #arrows(UniqueChunk, TH-SD, UniqueChunk, TH+SD, col='green', length=0.05, angle=90, code=3)
 P <- predict(loess(TH ~ UniqueChunk))
 lines(P ~ UniqueChunk, col="green", lwd=1, lty='dashed')
@@ -55,6 +55,6 @@ lines(P ~ UniqueChunk, col="black", lwd=1, lty='dashed')
 
 # legend
 legend(17, 230, c("2GB File", "4GB File", "8GB File", "16GB File"), cex=0.8,
-col=c("green", "blue", "red", "black"), pch=21:24, lty=1:4);
+col=c("green", "blue", "red", "black"), pch=21:24, lty=c(2,2,2,2));
 
 dev.off()
