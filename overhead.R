@@ -40,19 +40,19 @@ lines(P ~ NoSyncBS, col="red", lwd=1, lty='dashed')
 legend(60, 130, c("With sync","Without sync"), cex=0.8,
 col=c("blue","red"), pch=21:22, lty=1:2);
 
-# plot2
-plot(SyncBS, SyncCPU, ylim=c(12, 16), col='blue', xaxt='n', log="x", xlab="Block Size [MB]", ylab="Cpu utilization [%]")
-axis(1, at=SyncBS, lab=SyncBS)
-arrows(SyncBS, SyncCPU-SyncCPUSD, SyncBS, SyncCPU+SyncCPUSD, col='blue', length=0.05, angle=90, code=3)
-P <- predict(loess(SyncCPU ~ SyncBS))
-lines(P ~ SyncBS, col="blue", lwd=1, lty='dashed')
-
-points(NoSyncBS, NoSyncCPU, pch=22, lty=2, col="red")
-arrows(NoSyncBS, NoSyncCPU-NoSyncCPUSD, NoSyncBS, NoSyncCPU+NoSyncCPUSD, col='red', length=0.05, angle=90, code=3)
-P <- predict(loess(NoSyncCPU ~ NoSyncBS))
-lines(P ~ NoSyncBS, col="red", lwd=1, lty='dashed')
-
-legend(60, 15.5, c("With sync","Without sync"), cex=0.8,
-col=c("blue","red"), pch=21:22, lty=1:2);
+## plot2
+#plot(SyncBS, SyncCPU, ylim=c(12, 16), col='blue', xaxt='n', log="x", xlab="Block Size [MB]", ylab="Cpu utilization [%]")
+#axis(1, at=SyncBS, lab=SyncBS)
+#arrows(SyncBS, SyncCPU-SyncCPUSD, SyncBS, SyncCPU+SyncCPUSD, col='blue', length=0.05, angle=90, code=3)
+#P <- predict(loess(SyncCPU ~ SyncBS))
+#lines(P ~ SyncBS, col="blue", lwd=1, lty='dashed')
+#
+#points(NoSyncBS, NoSyncCPU, pch=22, lty=2, col="red")
+#arrows(NoSyncBS, NoSyncCPU-NoSyncCPUSD, NoSyncBS, NoSyncCPU+NoSyncCPUSD, col='red', length=0.05, angle=90, code=3)
+#P <- predict(loess(NoSyncCPU ~ NoSyncBS))
+#lines(P ~ NoSyncBS, col="red", lwd=1, lty='dashed')
+#
+#legend(60, 15.5, c("With sync","Without sync"), cex=0.8,
+#col=c("blue","red"), pch=21:22, lty=1:2);
 
 dev.off()
