@@ -9,8 +9,8 @@ FileSize = aggregate(Data$ThroughputMBs ~ Data$ChunkSizeMB + Data$FileSizeMB, FU
 Chunk = aggregate(Data$ThroughputMBs ~ Data$ChunkSizeMB + Data$FileSizeMB, FUN=mean)$'Data$ChunkSizeMB'
 Throughput = aggregate(Data$ThroughputMBs ~ Data$ChunkSizeMB + Data$FileSizeMB, FUN=mean)$'Data$ThroughputMB'
 ThroughputSD = aggregate(Data$ThroughputMBs ~ Data$ChunkSizeMB + Data$FileSizeMB, FUN=sd)$'Data$ThroughputMB'
-CPU = aggregate(Data$CPU ~ Data$BlockSizeMB, FUN=mean)$'Data$CPU'
-CPUSD = aggregate(Data$CPU ~ Data$BlockSizeMB, FUN=sd)$'Data$CPU'
+CPU = aggregate(Data$CPU0 ~ Data$BlockSizeMB, FUN=mean)$'Data$CPU0'
+CPUSD = aggregate(Data$CPU0 ~ Data$BlockSizeMB, FUN=sd)$'Data$CPU0'
 
 UniqueFileSize = unique(FileSize)
 UniqueChunk = unique(Chunk) / (1024*1024)
@@ -23,7 +23,7 @@ pdf(args[2])
 # plot 1
 TH = Throughput[1:ChunkNum]
 SD = ThroughputSD[1:ChunkNum]
-plot(UniqueChunk, TH, ylim=c(200, 400), xlab="Chunk Size [MB]", col='green', xaxt='n', log="x", ylab="Throughput [MB / s]")
+plot(UniqueChunk, TH, ylim=c(420, 550), xlab="Chunk Size [MB]", col='green', xaxt='n', log="x", ylab="Throughput [MB / s]")
 axis(1, at=UniqueChunk, lab=c(UniqueChunk[1:(ChunkNum-1)], "variable"))
 #arrows(UniqueChunk, TH-SD, UniqueChunk, TH+SD, col='green', length=0.05, angle=90, code=3)
 P <- predict(loess(TH ~ UniqueChunk))
@@ -45,16 +45,15 @@ points(UniqueChunk, TH, pch=23, lty=3, col="red")
 P <- predict(loess(TH ~ UniqueChunk))
 lines(P ~ UniqueChunk, col="red", lwd=1, lty='dashed')
 
-# 3rd file
-TH = Throughput[(3*ChunkNum+1):(4*ChunkNum)]
-SD = ThroughputSD[(3*ChunkNum+1):(4*ChunkNum)]
-points(UniqueChunk, TH, pch=24, lty=4, col="black")
+## 3rd file
+#TH = Throughput[(3*ChunkNum+1):(4*ChunkNum)]
+#SD = ThroughputSD[(3*ChunkNum+1):(4*ChunkNum)]
+#points(UniqueChunk, TH, pch=24, lty=4, col="black")
 #arrows(UniqueChunk, TH-SD, UniqueChunk, TH+SD, col='black', length=0.05, angle=90, code=3)
-P <- predict(loess(TH ~ UniqueChunk))
-lines(P ~ UniqueChunk, col="black", lwd=1, lty='dashed')
+#P <- predict(loess(TH ~ UniqueChunk))
+#lines(P ~ UniqueChunk, col="black", lwd=1, lty='dashed')
 
 # legend
-legend(17, 230, c("2GB File", "4GB File", "8GB File", "16GB File"), cex=0.8,
-col=c("green", "blue", "red", "black"), pch=21:24, lty=c(2,2,2,2));
+legend("bottomright", legend=c("4GB File", "8GB File", "16GB File"), cex=0.8, col=c("green", "blue", "red"), pch=21:22, lty=c(2,2,2));
 
 dev.off()
