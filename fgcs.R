@@ -27,7 +27,7 @@ SeparatedWriteThroughput = aggregate(SeparatedWrite$Throughput ~ SeparatedWrite$
 pdf(args[5])
 
 # plot 1
-plot(SharedReadProviderId, SharedReadThroughput, pch=1, ylim=c(0, 1000), xlab="Number of providers", col='black', xaxt='n', ylab="Throughput [MB / s]")
+plot(SharedReadProviderId, SharedReadThroughput, pch=1, ylim=c(0, 1000), xlab="Provider number", col='black', xaxt='n', ylab="Throughput [MB / s]")
 axis(1, at=SharedReadProviderId, lab=SharedReadProviderId)
 
 # shared
