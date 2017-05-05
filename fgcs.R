@@ -35,7 +35,7 @@ plot(SharedReadProviderId, SharedReadThroughput, pch=1, ylim=c(0, 1200), xlab="P
 axis(1, at=SharedReadProviderId, lab=SharedReadProviderId)
 
 # shared first read
-points(FirstReadProviderId, FirstReadThroughput, pch=1, lty=2, col="black")
+points(FirstReadProviderId, FirstReadThroughput, pch=16, lty=2, col="black")
 
 # shared read
 arrows(SharedReadProviderId, SharedReadThroughput-SharedReadThroughputSd, SharedReadProviderId, SharedReadThroughput+SharedReadThroughputSd, col='black', length=0.05, angle=90, code=3)
@@ -62,6 +62,6 @@ lines(P ~ SeparatedWriteProviderId, col='green', lwd=1, lty='dashed')
 
 # legend
 legend("topright", legend=c("Shared space first read", "Shared space read","Local space read", "Shared space write", "Local space write"),
-cex=0.8, col=c("black","black","red","blue", "green"), pch=c(1, 1, 0, 2, 5), lty=c(2,2,2,2,2));
+cex=0.8, col=c("black","black","red","blue", "green"), pch=c(16, 1, 0, 2, 5), lty=c(0,2,2,2,2));
 
 dev.off()
