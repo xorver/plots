@@ -1,13 +1,17 @@
 #!/usr/bin/env Rscript
 args = commandArgs(trailingOnly=TRUE)
 
+library(ggplot2)
+library(ggthemes)
+
+
 options(scipen=5)
 
-SharedRead = read.csv(args[1], header = TRUE, sep = ",")
-SeparatedRead = read.csv(args[2], header = TRUE, sep = ",")
-SharedWrite = read.csv(args[3], header = TRUE, sep = ",")
-SeparatedWrite = read.csv(args[4], header = TRUE, sep = ",")
-FirstRead = read.csv(args[5], header = TRUE, sep = ",")
+SharedRead = read.csv("~/one_projects/plots/fgcs_data/shared_space_filtered_read.csv", header = TRUE, sep = ",")
+SeparatedRead = read.csv("~/one_projects/plots/fgcs_data/separated_space_filtered_read.csv", header = TRUE, sep = ",")
+SharedWrite = read.csv("~/one_projects/plots/fgcs_data/shared_space_filtered_write.csv", header = TRUE, sep = ",")
+SeparatedWrite = read.csv("~/one_projects/plots/fgcs_data/separated_space_filtered_write.csv", header = TRUE, sep = ",")
+FirstRead = read.csv("~/one_projects/plots/fgcs_data/shared_space_first_read.csv", header = TRUE, sep = ",")
 
 SharedReadProviderId = aggregate(SharedRead$Throughput ~ SharedRead$ProviderId, FUN=sd)$'SharedRead$ProviderId'
 SharedReadThroughputSd = aggregate(SharedRead$Throughput ~ SharedRead$ProviderId, FUN=sd)$'SharedRead$Throughput'
@@ -25,43 +29,44 @@ SeparatedWriteProviderId = aggregate(SeparatedWrite$Throughput ~ SeparatedWrite$
 SeparatedWriteThroughputSd = aggregate(SeparatedWrite$Throughput ~ SeparatedWrite$ProviderId, FUN=sd)$'SeparatedWrite$Throughput'
 SeparatedWriteThroughput = aggregate(SeparatedWrite$Throughput ~ SeparatedWrite$ProviderId, FUN=mean)$'SeparatedWrite$Throughput'
 
-FirstReadProviderId = FirstRead$ProviderId
-FirstReadThroughput = FirstRead$Throughput
+FirstReadProviderId = c(c(1), FirstRead$ProviderId)
+FirstReadThroughput = c(9999, FirstRead$Throughput)
 
-pdf(args[6])
+
+df <- data.frame( 
+  SharedReadProviderId = SharedReadProviderId,
+  SharedReadThroughput = SharedReadThroughput,
+  SharedReadThroughputSd = SharedReadThroughputSd
+) 
 
 # plot 1
-plot(SharedReadProviderId, SharedReadThroughput, pch=1, ylim=c(0, 1200), xlab="Provider number", col='black', xaxt='n', ylab="Throughput [MB / s]")
-axis(1, at=SharedReadProviderId, lab=SharedReadProviderId)
+ggplot(df, aes(SharedReadProviderId)) + 
+  
+  geom_line(aes(y=SharedReadThroughput, colour = "Shared space read"), size=1.3) + 
+  geom_point(aes(y=SharedReadThroughput, colour = "Shared space read"), size = 2) +
+  geom_errorbar(width=.1, aes(ymin=SharedReadThroughput-SharedReadThroughputSd, ymax=SharedReadThroughput+SharedReadThroughputSd, colour = "Shared space read")) +
+  
+  geom_line(aes(y=SeparatedReadThroughput, colour = "Local space read"), size=1.3) +
+  geom_point(aes(y=SeparatedReadThroughput, colour = "Local space read"), size = 2) +
+  geom_errorbar(width=.1, aes(ymin=SeparatedReadThroughput-SeparatedReadThroughputSd, ymax=SeparatedReadThroughput+SeparatedReadThroughputSd, colour = "Local space read")) +
+  
+  geom_line(aes(y=SharedWriteThroughput, colour = "Shared space write"), size=1.3) +
+  geom_point(aes(y=SharedWriteThroughput, colour = "Shared space write"), size = 2) +
+  geom_errorbar(width=.1, aes(ymin=SharedWriteThroughput-SharedWriteThroughputSd, ymax=SharedWriteThroughput+SharedWriteThroughputSd, colour = "Shared space write")) +
+  
+  geom_line(aes(y=SeparatedWriteThroughput, colour = "Local space write"), size=1.3) +
+  geom_point(aes(y=SeparatedWriteThroughput, colour = "Local space write"), size = 2) +
+  geom_errorbar(width=.1, aes(ymin=SeparatedWriteThroughput-SeparatedWriteThroughputSd, ymax=SeparatedWriteThroughput+SeparatedWriteThroughputSd, colour = "Local space write")) +
+  
+  geom_point(aes(x=FirstReadProviderId, y=FirstReadThroughput, colour = "Shared space first read"), size = 2) +
+  
+  scale_colour_discrete("") +
+  theme_hc(base_size = 18) +
+  theme(legend.position = "right") +
+  ylim(0,1000) + 
+  scale_x_continuous(breaks=seq(0, 9, 1)) +
+  xlab("Provider number") +
+  ylab("Throughput [MB / s]")
 
-# shared first read
-points(FirstReadProviderId, FirstReadThroughput, pch=16, lty=2, col="black")
+ggsave("~/one_projects/plots/results/multiprovider_sync_overhead.pdf", width = 10, height = 6)
 
-# shared read
-arrows(SharedReadProviderId, SharedReadThroughput-SharedReadThroughputSd, SharedReadProviderId, SharedReadThroughput+SharedReadThroughputSd, col='black', length=0.05, angle=90, code=3)
-P <- predict(loess(SharedReadThroughput ~ SharedReadProviderId))
-lines(P ~ SharedReadProviderId, col="black", lwd=1, lty='dashed')
-
-# separated read
-points(SeparatedReadProviderId, SeparatedReadThroughput, pch=0, lty=2, col="red")
-arrows(SeparatedReadProviderId, SeparatedReadThroughput-SeparatedReadThroughputSd, SeparatedReadProviderId, SeparatedReadThroughput+SeparatedReadThroughputSd, col='red', length=0.05, angle=90, code=3)
-P <- predict(loess(SeparatedReadThroughput ~ SeparatedReadProviderId))
-lines(P ~ SeparatedReadProviderId, col="red", lwd=1, lty='dashed')
-
-# shared write
-points(SharedWriteProviderId, SharedWriteThroughput, pch=2, lty=2, col="blue")
-arrows(SharedWriteProviderId, SharedWriteThroughput-SharedWriteThroughputSd, SharedWriteProviderId, SharedWriteThroughput+SharedWriteThroughputSd, col='blue', length=0.05, angle=90, code=3)
-P <- predict(loess(SharedWriteThroughput ~ SharedWriteProviderId))
-lines(P ~ SharedWriteProviderId, col='blue', lwd=1, lty='dashed')
-
-# separated write
-points(SeparatedWriteProviderId, SeparatedWriteThroughput, pch=5, lty=2, col="green")
-arrows(SeparatedWriteProviderId, SeparatedWriteThroughput-SeparatedWriteThroughputSd, SeparatedWriteProviderId, SeparatedWriteThroughput+SeparatedWriteThroughputSd, col='green', length=0.05, angle=90, code=3)
-P <- predict(loess(SeparatedWriteThroughput ~ SeparatedWriteProviderId))
-lines(P ~ SeparatedWriteProviderId, col='green', lwd=1, lty='dashed')
-
-# legend
-legend("topright", legend=c("Shared space first read", "Shared space read","Local space read", "Shared space write", "Local space write"),
-cex=0.8, col=c("black","black","red","blue", "green"), pch=c(16, 1, 0, 2, 5), lty=c(0,2,2,2,2));
-
-dev.off()
