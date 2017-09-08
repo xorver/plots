@@ -7,11 +7,11 @@ library(ggthemes)
 
 options(scipen=5)
 
-SharedRead = read.csv("~/one_projects/plots/fgcs_data/shared_space_filtered_read.csv", header = TRUE, sep = ",")
-SeparatedRead = read.csv("~/one_projects/plots/fgcs_data/separated_space_filtered_read.csv", header = TRUE, sep = ",")
-SharedWrite = read.csv("~/one_projects/plots/fgcs_data/shared_space_filtered_write.csv", header = TRUE, sep = ",")
-SeparatedWrite = read.csv("~/one_projects/plots/fgcs_data/separated_space_filtered_write.csv", header = TRUE, sep = ",")
-FirstRead = read.csv("~/one_projects/plots/fgcs_data/shared_space_first_read.csv", header = TRUE, sep = ",")
+SharedRead = read.csv(args[1], header = TRUE, sep = ",")
+SeparatedRead = read.csv(args[2], header = TRUE, sep = ",")
+SharedWrite = read.csv(args[3], header = TRUE, sep = ",")
+SeparatedWrite = read.csv(args[4], header = TRUE, sep = ",")
+FirstRead = read.csv(args[5], header = TRUE, sep = ",")
 
 SharedReadProviderId = aggregate(SharedRead$Throughput ~ SharedRead$ProviderId, FUN=sd)$'SharedRead$ProviderId'
 SharedReadThroughputSd = aggregate(SharedRead$Throughput ~ SharedRead$ProviderId, FUN=sd)$'SharedRead$Throughput'
@@ -68,5 +68,5 @@ ggplot(df, aes(SharedReadProviderId)) +
   xlab("Provider number") +
   ylab("Throughput [MB / s]")
 
-ggsave("~/one_projects/plots/results/multiprovider_sync_overhead.pdf", width = 10, height = 6)
+ggsave(args[6], width = 10, height = 6)
 
